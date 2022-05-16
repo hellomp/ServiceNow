@@ -1,0 +1,81 @@
+<div ng-if="c.data.variables.length > 0" ng-init="c.variable_toggle = c.toggle">
+  <a
+    href="javascript:void(0)"
+    aria-expanded="{{c.variable_toggle}}"
+    aria-label="{{data.ariaLabel}}"
+    ng-click="c.variable_toggle = !c.variable_toggle"
+    ng-if="!c.hide_control"
+  >
+    <span
+      style="font-size: 12px"
+      class="glyphicon"
+      ng-class="c.variable_toggle ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"
+    ></span>
+    {{data.label}}
+  </a>
+
+  <div
+    ng-if="c.variable_toggle"
+    id="variables-toggle"
+    aria-hidden="{{!c.variable_toggle}}"
+  >
+    <hr role="presentation" ng-if="!c.hide_control" />
+    <div
+      class="m-b break-word"
+      ng-repeat="variable in c.data.variables | filter:{visible_summary:true}"
+    >
+      <label class="m-t-xs m-b-none text-muted"
+        ><b>{{::variable.label}}</b></label
+      >
+      <div ng-if="!variable.multi_row">
+        <div ng-switch="variable.type">
+          <!-- 27 is type URL, 33 is type Attachment -->
+          <a
+            ng-switch-when="27"
+            class="pre-wrap"
+            title="{{::variable.label}}"
+            href="{{::variable.display_value}}"
+            target="_blank"
+            >{{::variable.display_value}}</a
+          >
+          <span ng-switch-when="33" class="file-attachment">
+            <a
+              ng-if="::variable.state != 'not_available'"
+              class="pre-wrap"
+              title="{{::variable.label}}"
+              href="javascript:void(0);"
+              ng-click="scanAttachment(variable)"
+              aria-label="${Download {{variable.display_value}}}"
+              >{{::variable.display_value}}</a
+            >
+            <span ng-if="::variable.state == 'not_available'" class="error">
+              <a
+                class="pre-wrap"
+                title="{{::variable.label}}"
+                href="javascript:void(0);"
+                ng-click="scanAttachment(variable)"
+                aria-label="${File {{variable.display_value}} failed security scan}"
+                >{{::variable.display_value}}</a
+              >
+              (${File failed security scan})
+            </span>
+          </span>
+          <span ng-switch-default class="pre-wrap"
+            >{{::variable.display_value}}</span
+          >
+        </div>
+      </div>
+      <div ng-if="variable.multi_row">
+        <a
+          href="javascript:void(0)"
+          uib-popover-template="'sp_multirow_vs_summarizer.html'"
+          popover-title="{{variable.label}}"
+          popover-placement="auto top"
+          popover-append-to-body="true"
+          popover-trigger="outsideClick"
+          >${Click to view}</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
